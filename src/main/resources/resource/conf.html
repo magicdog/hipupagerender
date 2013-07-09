@@ -1,0 +1,108 @@
+
+<!doctype html>
+<html>
+
+    <head>
+        <title>PageRender Configuration</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <style type="text/css">
+            .val{
+                margin-bottom: 0 !important;
+                height: 18px !important;
+            }
+        </style>
+        <script src="http://hipu.mobi/lib/jq.js"></script>
+        <script type="text/javascript">
+            function initConfig(){
+                var query =  "/service/config?action=query";
+                $.get(query,
+                        {},
+                        function(data){
+                            var html = "";
+                            for ( var i in data ){
+                                html += "<tr>";
+                                html += ('<td class="name">' + data[i].name + "</td>");
+                                html += ('<td>' + data[i].class + "</td>");
+                                html += ('<td>' + data[i].default + "</td>");
+                                var readonly = 'disabled';
+                                if ( data[i].mutable ) readonly = '';
+
+                                html += ('<td><input type="text" class="val input-xlarge"' + readonly + ' value="' + data[i].value +'"></td>');
+                                if ( data[i].mutable )
+                                    html += ('<td><input type="button" value="Update" class="btn btn-small" onclick="bupdate(this)"></td>');
+                                else
+                                    html += '<td></td>'
+                                html +="</tr>"
+                            }
+
+                            $("tbody")[0].innerHTML = html;
+                        }, "json"
+                );
+            }
+
+            function update(name, val){
+                var query =  "/service/config?action=update&name=" + name + "&value=" + val;
+                $.get(query,
+                        {},
+                        function(data){
+                            if (data['error'] != -1){
+                                alert("update error! " + data['error']);
+                            }
+                        }, "json"
+                );
+            }
+
+            function bupdate(obj){
+                var trElem = obj.parentNode.parentNode;
+                var name = trElem.getElementsByClassName('name')[0].innerHTML.trim();
+                var val = trElem.getElementsByClassName('val')[0].value.trim();
+                update(name, val);
+            }
+
+            $(document).ready(function(){
+                initConfig();
+            });
+        </script>
+    </head>
+
+    <body>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">PageRender</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li>
+                            <a href="#" class="active">Home</a>
+                        </li>
+                        <li class="active">
+                            <a href="#">Config</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <table class="table table-hover table-condensed">
+            <thead>
+            <tr>
+                <th>Argument</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    </body>
+
+</html>

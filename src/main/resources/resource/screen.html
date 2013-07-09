@@ -1,0 +1,62 @@
+
+<!doctype html>
+<html>
+
+    <head>
+        <title>PageRender Configuration</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <style type="text/css">
+            .val{
+                margin-bottom: 0 !important;
+                height: 18px !important;
+            }
+        </style>
+        <script src="http://hipu.mobi/lib/jq.js"></script>
+        <script type="text/javascript">
+            function init(){
+                var query =  "/service/allscreen";
+                $.get(query,
+                        {},
+                        function(data){
+                            var html = "";
+                            for ( var i in data ){
+                                if ( i % 4 == 0 ){
+                                    html += "<tr>";
+                                }
+
+                                html += '<td><img class="img-polaroid" src="data:image/jpg;base64,';
+                                html += data[i];
+                                html += '"/></td>';
+                                if ( i % 4 == 3 ){
+                                    html += '</tr>';
+                                }
+                            }
+
+                            if ( i % 4 != 3 ){
+                                html += '</tr>';
+                            }
+
+
+                            $("tbody")[0].innerHTML = html;
+                        }, "json"
+                );
+            }
+
+            $(document).ready(function(){
+                init();
+            });
+        </script>
+    </head>
+
+    <body>
+
+    <div class="container">
+        <table class="table">
+            <tbody></tbody>
+        </table>
+    </div>
+    </body>
+
+</html>
